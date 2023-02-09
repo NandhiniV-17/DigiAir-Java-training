@@ -1,7 +1,10 @@
 package methodReferenceAndStream;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class Employee{
@@ -16,6 +19,11 @@ this.name = name;
 this.role = role;
 this.salary = salary;
 }
+}
+class EmpMaxMinSalary implements Comparator<Employee> {
+	public int compare(Employee o1, Employee o2) {
+		return (int) (o1.salary - o2.salary);
+	}
 }
 
 public class JavaStreams {
@@ -45,11 +53,32 @@ public class JavaStreams {
 		
 
 		//count method
-		System.out.println ("\nTotal no. of employee with salary equals 45000:");
 		long count = emp.stream()  
                 .filter(Employee -> Employee.salary == 45000)  
                 .count();  
-		System.out.println(count);  
+		System.out.println("\nTotal no. of employee with salary equals 45000: " + count); 
+		
+		//Filtering Collection by using Stream
+		System.out.println("\n List of Employees whose salary are more than 35,000$");
+		List<String> empname = emp.stream()  
+                .filter(p -> p.salary > 35000)// filtering data  
+                .map(p->p.name)        // fetching name based on the filter  
+                .collect(Collectors.toList());// collecting as list
+		System.out.println(empname +" ");  
+		
+		//reduce() Method  
+		int totalSalaryOfEmployess = emp.stream()  
+                 .map(Employee->Employee.salary)  
+                 .reduce(0,(sum,salary)->sum+salary);   // accumulating price  
+     System.out.println("\n\nTotal salary amount of all the employees: " + totalSalaryOfEmployess + "$");
+     
+     //Find Max and Min salary of an employee
+     System.out.println("\nMaximum Salary is");
+     Optional<Employee> maxsal = emp.stream().max(new EmpMaxMinSalary());
+ 	maxsal.ifPresent((d)->System.out.println(d.empid+" "+d.name+" "+d.role + " "+ d.salary));
+ 	
+ 	System.out.println("\nMinimum Salary is");
+    Optional<Employee> minsal = emp.stream().min(new EmpMaxMinSalary());
+	minsal.ifPresent((d)->System.out.println(d.empid+" "+d.name+" "+d.role + " "+ d.salary));
 	}
-
 }
